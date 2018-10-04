@@ -28,3 +28,6 @@ sudo chown -R $USER:$USER /var/hyperledger
 # Ensure permissions are set for GOPATH
 sudo chown -R $USER:$USER $GOPATH
 
+# Pull docker image for integration test
+docker pull hyperledger/fabric-javaenv:latest
+
