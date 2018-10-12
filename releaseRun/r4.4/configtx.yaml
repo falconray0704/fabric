@@ -1,0 +1,163 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+---
+################################################################################
+#
+#   ORGANIZATIONS
+#
+#   This section defines the organizational identities that can be referenced
+#   in the configuration profiles.
+#
+################################################################################
+Organizations:
+
+    # SampleOrg defines an MSP using the sampleconfig. It should never be used
+    # in production but may be used as a template for other definitions.
+    - &OrdererOrg
+        # Name is the key by which this org will be referenced in channel
+        # configuration transactions.
+        # Name can include alphanumeric characters as well as dots and dashes.
+        Name: OrdererOrg
+
+        # ID is the key by which this org's MSP definition will be referenced.
+        # ID can include alphanumeric characters as well as dots and dashes.
+        ID: OrdererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration.
+        MSPDir: /hyperledger/runEnv/r4.4/fabricconfig/crypto-config/ordererOrganizations/hf.com/msp
+
+    - &Org1
+        Name: Org1MSP
+        ID: Org1MSP
+        MSPDir: /hyperledger/runEnv/r4.4/fabricconfig/crypto-config/peerOrganizations/org1.hf.com/msp
+        AnchorPeers:
+            - Host: peer0.org1.hf.com
+              Port: 7051
+
+    - &Org2
+        Name: Org2MSP
+        ID: Org2MSP
+        MSPDir: /hyperledger/runEnv/r4.4/fabricconfig/crypto-config/peerOrganizations/org2.hf.com/msp
+        AnchorPeers:
+            - Host: peer0.org2.hf.com
+              Port: 7051
+
+################################################################################
+#
+#   APPLICATION
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for application-related parameters.
+#
+################################################################################
+Application: &ApplicationDefaults
+    # Organizations lists the orgs participating on the application side of the
+    # network.
+    Organizations:
+
+################################################################################
+#
+#   ORDERER
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters.
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    # Orderer Type: The orderer implementation to start.
+    # Available types are "solo" and "kafka".
+    OrdererType: solo
+
+    # Addresses here is a nonexhaustive list of orderers the peers and clients can
+    # connect to. Adding/removing nodes from this list has no impact on their
+    # participation in ordering.
+    # NOTE: In the solo case, this should be a one-item list.
+    Addresses:
+        - orderer.hl.com:7050
+
+    # Batch Timeout: The amount of time to wait before creating a batch.
+    BatchTimeout: 2s
+
+    # Batch Size: Controls the number of messages batched into a block.
+    # The orderer views messages opaquely, but typically, messages may
+    # be considered to be Fabric transactions.  The 'batch' is the group
+    # of messages in the 'data' field of the block.  Blocks will be a few kb
+    # larger than the batch size, when signatures, hashes, and other metadata
+    # is applied.
+    BatchSize:
+
+        # Max Message Count: The maximum number of messages to permit in a
+        # batch.  No block will contain more than this number of messages.
+        MaxMessageCount: 10
+
+        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+        # the serialized messages in a batch. The maximum block size is this value
+        # plus the size of the associated metadata (usually a few KB depending
+        # upon the size of the signing identities). Any transaction larger than
+        # this value will be rejected by ordering. If the "kafka" OrdererType is
+        # selected, set 'message.max.bytes' and 'replica.fetch.max.bytes' on
+        # the Kafka brokers to a value that is larger than this one.
+        AbsoluteMaxBytes: 98 MB
+
+        # Preferred Max Bytes: The preferred maximum number of bytes allowed
+        # for the serialized messages in a batch. Roughly, this field may be considered
+        # the best effort maximum size of a batch. A batch will fill with messages
+        # until this size is reached (or the max message count, or batch timeout is
+        # exceeded).  If adding a new message to the batch would cause the batch to
+        # exceed the preferred max bytes, then the current batch is closed and written
+        # to a block, and a new batch containing the new message is created.  If a
+        # message larger than the preferred max bytes is received, then its batch
+        # will contain only that message.  Because messages may be larger than
+        # preferred max bytes (up to AbsoluteMaxBytes), some batches may exceed
+        # the preferred max bytes, but will always contain exactly one transaction.
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        # Brokers: A list of Kafka brokers to which the orderer connects. Edit
+        # this list to identify the brokers of the ordering service.
+        # NOTE: Use IP:port notation.
+        Brokers:
+            - kafka0:9092
+
+    # Organizations lists the orgs participating on the orderer side of the
+    # network.
+    Organizations:
+
+################################################################################
+#
+#   PROFILES
+#
+#   Different configuration profiles may be encoded here to be specified as
+#   parameters to the configtxgen tool. The profiles which specify consortiums
+#   are to be used for generating the orderer genesis block. With the correct
+#   consortium members defined in the orderer genesis block, channel creation
+#   requests may be generated with only the org member names and a consortium
+#   name.
+#
+################################################################################
+Profiles:
+
+    TestTwoOrgsOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Org1
+                    - *Org2
+
+    TestTwoOrgsChannel:
+        Consortiums:
+            SampleConsortium:
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+                - *Org2
+
