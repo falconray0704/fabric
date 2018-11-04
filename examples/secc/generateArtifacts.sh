@@ -128,7 +128,24 @@ function generateChannelArtifacts() {
 	echo
 }
 
+update_deployment_configuration_files()
+{
+
+    rm -rf secc-111/e2e_cli/channel-artifacts  secc-111/e2e_cli/crypto-config
+    rm -rf secc-113/e2e_cli/channel-artifacts  secc-113/e2e_cli/crypto-config
+    rm -rf secc-114/e2e_cli/channel-artifacts  secc-114/e2e_cli/crypto-config
+    rm -rf secc-115/e2e_cli/channel-artifacts  secc-115/e2e_cli/crypto-config
+    rm -rf secc-116/e2e_cli/channel-artifacts  secc-116/e2e_cli/crypto-config
+
+    cp -a channel-artifacts crypto-config secc-111/e2e_cli/
+    cp -a channel-artifacts crypto-config secc-113/e2e_cli/
+    cp -a channel-artifacts crypto-config secc-114/e2e_cli/
+    cp -a channel-artifacts crypto-config secc-115/e2e_cli/
+    cp -a channel-artifacts crypto-config secc-116/e2e_cli/
+}
+
 generateCerts
 generateIdemixMaterial
 replacePrivateKey
 generateChannelArtifacts
+update_deployment_configuration_files
