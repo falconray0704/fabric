@@ -1,6 +1,7 @@
 #SPDX-License-Identifier: Apache-2.0
 
 # Local build binaries
+docker-compose-e2e.yaml
 channel-artifacts/*.tx
 channel-artifacts/*.block
 crypto-config/*
