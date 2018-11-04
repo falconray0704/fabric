@@ -131,6 +131,10 @@ function generateChannelArtifacts() {
 update_deployment_configuration_files()
 {
 
+	echo
+	echo "#################################################################"
+	echo "#######    Updating SECC deployment generation files ############"
+	echo "#################################################################"
     rm -rf secc-111/e2e_cli/channel-artifacts  secc-111/e2e_cli/crypto-config
     rm -rf secc-113/e2e_cli/channel-artifacts  secc-113/e2e_cli/crypto-config
     rm -rf secc-114/e2e_cli/channel-artifacts  secc-114/e2e_cli/crypto-config
@@ -142,6 +146,7 @@ update_deployment_configuration_files()
     cp -a channel-artifacts crypto-config secc-114/e2e_cli/
     cp -a channel-artifacts crypto-config secc-115/e2e_cli/
     cp -a channel-artifacts crypto-config secc-116/e2e_cli/
+    echo
 }
 
 generateCerts
