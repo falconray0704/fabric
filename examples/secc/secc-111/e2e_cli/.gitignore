@@ -5,3 +5,5 @@ channel-artifacts/*
 channel-artifacts/*
 crypto-config/*
 
+docker-compose-ca.yaml
+

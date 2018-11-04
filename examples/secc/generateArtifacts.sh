@@ -7,7 +7,8 @@
 
 set -o errexit
 
-set +e
+#set -x
+#set -e
 
 CHANNEL_NAME=$1
 : ${CHANNEL_NAME:="secc"}
@@ -21,24 +22,31 @@ OS_ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/window
 
 ## Using docker-compose template replace private key file names with constants
 function replacePrivateKey () {
-	ARCH=`uname -s | grep Darwin`
-	if [ "$ARCH" == "Darwin" ]; then
-		OPTS="-it"
-	else
+	echo
+	echo "####################################################################"
+	echo "##### Replace private key in docker-compose-e2e.yaml ###############"
+	echo "####################################################################"
+
+    #set -x
+	ARCH=`uname -s | grep Linux`
+	if [ "$ARCH" == "Linux" ]; then
 		OPTS="-i"
+	else
+        exit 1
 	fi
 
 	cp docker-compose-e2e-template.yaml docker-compose-e2e.yaml
 
-        CURRENT_DIR=$PWD
-        cd crypto-config/peerOrganizations/org1.secc-sfo.com/ca/
-        PRIV_KEY=$(ls *_sk)
-        cd $CURRENT_DIR
-        sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-        cd crypto-config/peerOrganizations/org2.secc-sfo.com/ca/
-        PRIV_KEY=$(ls *_sk)
-        cd $CURRENT_DIR
-        sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    CURRENT_DIR=$PWD
+    cd crypto-config/peerOrganizations/org1.secc-sfo.com/ca/
+    PRIV_KEY=$(ls *_sk)
+    cd $CURRENT_DIR
+    sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    cd crypto-config/peerOrganizations/org2.secc-sfo.com/ca/
+    PRIV_KEY=$(ls *_sk)
+    cd $CURRENT_DIR
+    sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    #set +x
 }
 
 ## Generates Org certs using cryptogen tool
@@ -106,7 +114,8 @@ function generateChannelArtifacts() {
 	echo "##########################################################"
 	# Note: For some unknown reason (at least for now) the block file can't be
 	# named orderer.genesis.block or the orderer will fail to launch!
-	$CONFIGTXGEN -profile TwoOrgsOrdererGenesis -channelID e2e-orderer-syschan -outputBlock ./channel-artifacts/genesis.block
+	#$CONFIGTXGEN -profile TwoOrgsOrdererGenesis -channelID e2e-orderer-syschan -outputBlock ./channel-artifacts/genesis.block
+	$CONFIGTXGEN -profile TwoOrgsOrdererGenesis -channelID secc-orderer-syschan -outputBlock ./channel-artifacts/genesis.block
 
 	echo
 	echo "#################################################################"
@@ -146,6 +155,27 @@ update_deployment_configuration_files()
     cp -a channel-artifacts crypto-config secc-114/e2e_cli/
     cp -a channel-artifacts crypto-config secc-115/e2e_cli/
     cp -a channel-artifacts crypto-config secc-116/e2e_cli/
+
+    #######################################################################
+	ARCH=`uname -s | grep Linux`
+	if [ "$ARCH" == "Linux" ]; then
+		OPTS="-i"
+	else
+        exit 1
+	fi
+
+	#echo "#################################################################"
+	echo "#######    Updating SECC secc-111/e2e_cli/docker-compose-ca.yaml ############"
+    set -x
+    pushd crypto-config/peerOrganizations/org1.secc-sfo.com/ca
+    PRIV_KEY=$(ls *_sk)
+    popd
+    pushd secc-111/e2e_cli
+    cp docker-compose-ca-template.yaml docker-compose-ca.yaml
+    sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-ca.yaml
+    popd
+    set +x
+
     echo
 }
 

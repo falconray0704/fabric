@@ -1,0 +1,22 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+services:
+
+  ca0.org1.secc-sfo.com: 
+    container_name: ca0.org1.secc-sfo.com
+    image: hyperledger/fabric-ca 
+    environment: 
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server 
+      - FABRIC_CA_SERVER_CA_NAME=ca0-org1 
+      - FABRIC_CA_SERVER_TLS_ENABLED=false 
+    # one ca server would be launched after docker launched success, 
+    # please remenber to update root certificated file and admin's password
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.secc-sfo.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d' 
+    volumes: 
+      - ./crypto-config/peerOrganizations/org1.secc-sfo.com/ca/:/etc/hyperledger/fabric-ca-server-config 
+    ports: 
+      - "7054:7054" 
