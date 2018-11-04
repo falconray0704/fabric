@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: Apache-2.0
+
+# Local build binaries
+channel-artifacts/*.tx
+channel-artifacts/*.block
+crypto-config/*
+
