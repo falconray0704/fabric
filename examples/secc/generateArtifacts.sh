@@ -11,7 +11,7 @@ set -o errexit
 #set -e
 
 CHANNEL_NAME=$1
-: ${CHANNEL_NAME:="secc"}
+: ${CHANNEL_NAME:="seccChannel"}
 echo $CHANNEL_NAME
 
 export FABRIC_ROOT=$PWD/../..

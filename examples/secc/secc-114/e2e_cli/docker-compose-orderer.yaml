@@ -7,24 +7,24 @@ version: '2'
 
 services:
 
-  orderer3.lychee.com:
+  orderer3.secc-sfo.com:
     extends:
       file:   base/docker-compose-base.yaml
-      service: orderer3.lychee.com
-    container_name: orderer3.lychee.com
+      service: orderer3.secc-sfo.com
+    container_name: orderer3.secc-sfo.com
     volumes:
       # 数据固化，将orderer的数据映射到本地
       - ./chainData/orderer/orderer3/:/var/hyperledger/production/
-      - ./crypto-config/ordererOrganizations/lychee.com/orderers/orderer3.lychee.com/msp:/var/hyperledger/orderer/msp
-      - ./crypto-config/ordererOrganizations/lychee.com/orderers/orderer3.lychee.com/tls:/var/hyperledger/orderer/tls
+      - ./crypto-config/ordererOrganizations/secc-sfo.com/orderers/orderer3.secc-sfo.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/secc-sfo.com/orderers/orderer3.secc-sfo.com/tls:/var/hyperledger/orderer/tls
     extra_hosts:
-      - "z1:10.0.200.113"
-      - "z2:10.0.200.114"
-      - "z3:10.0.200.115"
-      - "k4:10.0.200.116"
-      - "k1:10.0.200.113"
-      - "k2:10.0.200.114"
-      - "k3:10.0.200.115"
-      - "orderer1.lychee.com:10.0.200.111"
-      - "orderer2.lychee.com:10.0.200.113"
-      - "orderer3.lychee.com:10.0.200.114"
+      - "z1:172.16.255.113"
+      - "z2:172.16.255.114"
+      - "z3:172.16.255.115"
+      - "k4:172.16.255.116"
+      - "k1:172.16.255.113"
+      - "k2:172.16.255.114"
+      - "k3:172.16.255.115"
+      - "orderer1.secc-sfo.com:172.16.255.111"
+      - "orderer2.secc-sfo.com:172.16.255.113"
+      - "orderer3.secc-sfo.com:172.16.255.114"

@@ -9,14 +9,20 @@ set -o errexit
 
 
 case $1 in
-    up) echo "SECC 111 starting..."
+    up) echo "SECC 113 starting..."
+        docker-compose -f docker-zk.yaml up --force-recreate -d
+        docker-compose -f docker-kafka.yaml up --force-recreate -d
         docker-compose -f docker-compose-orderer.yaml up --force-recreate -d
-        docker-compose -f docker-compose-ca.yaml up --force-recreate -d
+        docker-compose -f docker-compose-peer.yaml up --force-recreate -d
+
         docker ps -a
         ;;
-    down) echo "SECC 111 stopping..."
-        docker-compose -f docker-compose-ca.yaml down --remove-orphans
+    down) echo "SECC 113 stopping..."
+        docker-compose -f docker-compose-peer.yaml down --remove-orphans
         docker-compose -f docker-compose-orderer.yaml down --remove-orphans
+        docker-compose -f docker-kafka.yaml down --remove-orphans
+        docker-compose -f docker-zk.yaml down --remove-orphans
+
         docker ps -a
         ;;
     *) echo "Unknow command"
