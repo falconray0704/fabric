@@ -15,7 +15,7 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=false 
     # one ca server would be launched after docker launched success, 
     # please remenber to update root certificated file and admin's password
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.secc-sfo.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/998dec713a37e1d810009482ffca7744fad12acae8fae0f2926f4ff41f442aff_sk -b admin:adminpw -d' 
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.secc-sfo.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d' 
     volumes: 
       - ./crypto-config/peerOrganizations/org2.secc-sfo.com/ca/:/etc/hyperledger/fabric-ca-server-config 
     ports: 

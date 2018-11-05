@@ -176,6 +176,17 @@ update_deployment_configuration_files()
     popd
     set +x
 
+	echo "#######    Updating SECC secc-116/e2e_cli/docker-compose-ca.yaml ############"
+    set -x
+    pushd crypto-config/peerOrganizations/org2.secc-sfo.com/ca
+    PRIV_KEY=$(ls *_sk)
+    popd
+    pushd secc-116/e2e_cli
+    cp docker-compose-ca-template.yaml docker-compose-ca.yaml
+    sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-ca.yaml
+    popd
+    set +x
+
     echo
 }
 
@@ -184,3 +195,5 @@ generateIdemixMaterial
 replacePrivateKey
 generateChannelArtifacts
 update_deployment_configuration_files
+
+echo "#######    All success ############"
